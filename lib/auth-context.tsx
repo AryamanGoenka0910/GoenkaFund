@@ -6,7 +6,8 @@ import {
   signInWithEmailAndPassword, 
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  AuthError
 } from 'firebase/auth'
 import { auth } from './firebase'
 
@@ -37,11 +38,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await signInWithEmailAndPassword(auth, email, password)
       return { success: true }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign in error:', error)
+      const authError = error as AuthError
       return { 
         success: false, 
-        error: error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password'
+        error: authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password'
           ? 'Invalid email or password'
           : 'An error occurred during sign in'
       }
@@ -52,13 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await createUserWithEmailAndPassword(auth, email, password)
       return { success: true }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign up error:', error)
+      const authError = error as AuthError
       return { 
         success: false, 
-        error: error.code === 'auth/email-already-in-use'
+        error: authError.code === 'auth/email-already-in-use'
           ? 'Email already in use'
-          : error.code === 'auth/weak-password'
+          : authError.code === 'auth/weak-password'
           ? 'Password should be at least 6 characters'
           : 'An error occurred during sign up'
       }
@@ -68,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await firebaseSignOut(auth)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Sign out error:', error)
     }
   }
