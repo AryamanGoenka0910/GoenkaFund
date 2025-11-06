@@ -138,7 +138,7 @@ export default function DashboardPage() {
   const irr = (calculateIRR(cashFlows, dates) ?? 0) * 100;
 
   return (
-    // <ProtectedRoute>
+    <ProtectedRoute>
       <div className="min-h-screen bg-black text-white">
         <main className="p-6">
           <div className="mb-6 flex items-center justify-between">
@@ -217,6 +217,6 @@ export default function DashboardPage() {
           </div>
         </main>
       </div>
-    // </ProtectedRoute>
+    </ProtectedRoute>
   )
 }
