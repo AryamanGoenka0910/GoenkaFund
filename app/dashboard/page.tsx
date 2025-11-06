@@ -92,11 +92,6 @@ export default function DashboardPage() {
     return null; // IRR didn't converge
   }
 
-
-//   if (status === "unauthenticated") {
-//     return null // Will redirect via onUnauthenticated
-//   }
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">

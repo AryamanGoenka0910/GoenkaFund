@@ -15,8 +15,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center bg-blue-600 text-white font-bold text-sm">G</div>
-              <div className="text-xl font-semibold text-gray-900 tracking-tight">GOENKAFUND</div>
+              <div className="text-xl font-semibold text-gray-900 tracking-tight">Surgo</div>
             </div>
 
             <div className="flex items-center gap-4">
@@ -41,7 +40,7 @@ export default function HomePage() {
                 <span className="text-blue-600"> Investment Management</span>
               </h1>
               <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl">
-                GoenkaFund LLC Surgo delivers sophisticated investment strategies and comprehensive portfolio management
+                Surgo LLC delivers sophisticated investment strategies and comprehensive portfolio management
                 solutions for institutional clients and high-net-worth individuals.
               </p>
             </div>
@@ -54,9 +53,9 @@ export default function HomePage() {
       <section id="about" className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Why Choose GoenkaFund</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Why Choose Surgo</h2>
             <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-              Three decades of proven expertise in alternative investment strategies and risk management
+              Two decades of proven expertise in alternative investment strategies and risk management
             </p>
           </div>
 
@@ -100,13 +99,11 @@ export default function HomePage() {
           <div className="grid gap-8 md:grid-cols-4">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center bg-blue-600 text-white font-bold text-sm">
-                  G
-                </div>
-                <div className="text-xl font-semibold tracking-tight">GOENKAFUND</div>
+
+                <div className="text-xl font-semibold tracking-tight">Surgo</div>
               </div>
               <p className="text-gray-400 text-sm">
-                LLC Surgo - Institutional investment management and advisory services.
+                Surgo LLC - Institutional investment management and advisory services.
               </p>
             </div>
 
@@ -142,7 +139,7 @@ export default function HomePage() {
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2024 GoenkaFund LLC Surgo. All rights reserved. | Privacy Policy | Terms of Service</p>
+            <p>&copy; 2024 Surgo LLC. All rights reserved. | Privacy Policy | Terms of Service</p>
           </div>
         </div>
       </footer>
