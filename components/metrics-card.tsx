@@ -32,7 +32,7 @@ export function MetricsCard({ title, value, change, chart }: MetricsCardProps) {
             <span>{change.value}</span>
           </div>
           {change.percentage && <span className="text-sm text-gray-500">{change.percentage}</span>}
-        </div>s
+        </div>
       </div>
     </Card>
   )

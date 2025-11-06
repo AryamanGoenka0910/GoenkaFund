@@ -16,12 +16,15 @@ import { useAuth } from "@/lib/auth-context"
 interface Position {
   id: string
   symbol: string
-  name: string
   quantity: number
-  purchasePrice: number
-  currentPrice: number
-  purchaseDate: string
-  type: string
+  costBasis: number
+  averageCostBasis: number,
+  currentPrice: number,
+  previousClose: number,
+  totalGainLoss: number,
+  totalGainLossPercent: number,
+  todayGainLoss: number,
+  todayGainLossPercent: number
 }
 
 export default function DashboardPage() {
@@ -32,11 +35,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchPositions()
-  }, []) // Run only on first load (component mount)
-//     if (status === "authenticated") {
-//       fetchPositions()
-//     }
-//   }, [status])
+  }, []) 
 
   const fetchPositions = async () => {
     try {
@@ -52,7 +51,7 @@ export default function DashboardPage() {
 
   const calculateMetrics = () => {
     const totalValue = positions.reduce((sum, pos) => sum + pos.quantity * pos.currentPrice, 0)
-    const totalCost = positions.reduce((sum, pos) => sum + pos.quantity * pos.purchasePrice, 0)
+    const totalCost = positions.reduce((sum, pos) => sum + pos.quantity * pos.averageCostBasis, 0)
     const totalGainLoss = totalValue - totalCost
     const totalGainLossPercent = totalCost > 0 ? (totalGainLoss / totalCost) * 100 : 0
 
@@ -64,6 +63,43 @@ export default function DashboardPage() {
     }
   }
 
+  const calculateIRR = (
+      cashFlows: number[],
+      dates: Date[],
+      guess: number = 0.1
+  ): number | null  => 
+  {
+    if (cashFlows.length !== dates.length) {
+      throw new Error("Cash flows and dates must be the same length.");
+    }
+
+    const maxIterations = 1000;
+    const tolerance = 1e-7;
+    let rate = guess;
+
+    const daysBetween = (d1: Date, d2: Date) =>
+      (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24);
+
+    const npv = (rate: number) => {
+      const t0 = dates[0];
+      return cashFlows.reduce((acc, cf, i) => {
+        const t = daysBetween(t0, dates[i]) / 365;
+        return acc + cf / Math.pow(1 + rate, t);
+      }, 0);
+    };
+
+    for (let i = 0; i < maxIterations; i++) {
+      const f = npv(rate);
+      const fPrime = (npv(rate + tolerance) - f) / tolerance; // numerical derivative
+      const newRate = rate - f / fPrime;
+      if (Math.abs(newRate - rate) < tolerance) {
+        return newRate;
+      }
+      rate = newRate;
+    }
+
+    return null; // IRR didn't converge
+  }
 
 
 //   if (status === "unauthenticated") {
@@ -82,9 +118,27 @@ export default function DashboardPage() {
   }
 
   const metrics = calculateMetrics()
+  const cashFlows = [-250, -250, -300, -300, -500, -800, -600, -1000, -200, -1500, -1500, -3000, 11436.647];
+  const dates = [
+    new Date("2024-06-09"),
+    new Date("2024-06-16"),
+    new Date("2024-06-17"),
+    new Date("2024-06-26"),
+    new Date("2024-09-24"),
+    new Date("2024-10-04"),
+    new Date("2024-11-05"),
+    new Date("2024-11-07"),
+    new Date("2025-05-12"),
+    new Date("2025-06-02"),
+    new Date("2025-06-16"),
+    new Date("2025-08-11"),
+    new Date("2025-11-05"),
+  ];
+
+  const irr = (calculateIRR(cashFlows, dates) ?? 0) * 100;
 
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
       <div className="min-h-screen bg-black text-white">
         <main className="p-6">
           <div className="mb-6 flex items-center justify-between">
@@ -93,7 +147,6 @@ export default function DashboardPage() {
               {/* <div className="text-sm text-muted-foreground">Welcome back, {session?.user?.name}</div> */}
             </div>
             <div className="flex gap-2">
-              <AddSecurityDialog onSecurityAdded={fetchPositions} />
               <Button variant="outline" className="gap-2 bg-transparent">
                 Export Report
                 <ChevronDown className="h-4 w-4" />
@@ -111,7 +164,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <MetricsCard
               title="Total Portfolio Value"
               value={`$${metrics.totalValue.toLocaleString()}`}
@@ -139,22 +192,31 @@ export default function DashboardPage() {
                 isPositive: metrics.totalGainLoss >= 0,
               }}
             />
+            <MetricsCard
+              title="IRR"
+              value={`$${irr.toFixed(2)}%`}
+              change={{
+                value: `${positions.length} positions`,
+                percentage: "",
+                isPositive: true,
+              }}
+            />
           </div>
 
-          <Card className="mt-6 border-white/10 bg-white/5">
+          {/* <Card className="mt-6 border-white/10 bg-white/5">
             <CardHeader>
               <CardTitle>Portfolio Performance</CardTitle>
             </CardHeader>
             <CardContent>
               <PerformanceChart />
             </CardContent>
-          </Card>
+          </Card> */}
 
           <div className="mt-6">
             <PositionsTable positions={positions} onRefresh={fetchPositions} />
           </div>
         </main>
       </div>
-    </ProtectedRoute>
+    // </ProtectedRoute>
   )
 }
